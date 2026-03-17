@@ -16,6 +16,8 @@ const ranges = [
   { value: "max", label: "Max" }
 ];
 
+const allowedRanges = new Set(ranges.map((option) => option.value));
+
 function formatCurrency(value) {
   return new Intl.NumberFormat("en-US", {
     style: "currency",
@@ -34,6 +36,61 @@ function formatDayLabel(value) {
     day: "numeric",
     year: "numeric"
   }).format(new Date(`${value}T00:00:00Z`));
+}
+
+function normalizeShareHoldings(rawHoldings) {
+  return rawHoldings
+    .map((holding) => ({
+      symbol: String(holding?.symbol || "").trim().toUpperCase(),
+      quantity: String(holding?.quantity || "").trim(),
+      name: String(holding?.name || "").trim()
+    }))
+    .filter((holding) => holding.symbol && holding.quantity);
+}
+
+function serializePortfolio(holdings, range) {
+  const normalizedHoldings = normalizeShareHoldings(holdings);
+  const params = new URLSearchParams();
+
+  if (normalizedHoldings.length) {
+    params.set(
+      "h",
+      normalizedHoldings.map((holding) => `${holding.symbol}:${holding.quantity}`).join(",")
+    );
+  }
+
+  params.set("r", allowedRanges.has(range) ? range : "5y");
+  return params.toString();
+}
+
+function parseSharedPortfolio(search) {
+  const params = new URLSearchParams(search);
+  const rawHoldings = params.get("h");
+  const range = params.get("r");
+
+  if (!rawHoldings) {
+    return null;
+  }
+
+  const holdings = rawHoldings
+    .split(",")
+    .map((entry) => {
+      const [symbol, quantity] = entry.split(":");
+      return {
+        symbol: String(symbol || "").trim().toUpperCase(),
+        quantity: String(quantity || "").trim()
+      };
+    })
+    .filter((holding) => holding.symbol && holding.quantity);
+
+  if (!holdings.length) {
+    return null;
+  }
+
+  return {
+    holdings,
+    range: allowedRanges.has(range) ? range : "5y"
+  };
 }
 
 function HoldingRow({ holding, onUpdate, onRemove }) {
@@ -161,8 +218,10 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState(null);
   const [activePointIndex, setActivePointIndex] = useState(null);
+  const [shareLabel, setShareLabel] = useState("Copy Share Link");
   const nextHoldingId = useRef(2);
   const chartRef = useRef(null);
+  const hasLoadedSharedPortfolio = useRef(false);
 
   const chart = result ? buildChart(result.series) : null;
   const activePoint = chart && activePointIndex !== null ? chart.coords[activePointIndex] : null;
@@ -198,8 +257,7 @@ export default function Home() {
     });
   }
 
-  async function handleSubmit(event) {
-    event.preventDefault();
+  async function submitPortfolio(submissionHoldings = holdings, submissionRange = range) {
     setIsLoading(true);
     setStatus("Loading portfolio history...");
 
@@ -210,8 +268,8 @@ export default function Home() {
           "content-type": "application/json"
         },
         body: JSON.stringify({
-          holdings: holdings.map(({ id, ...holding }) => holding),
-          range
+          holdings: submissionHoldings.map(({ id, ...holding }) => holding),
+          range: submissionRange
         })
       });
 
@@ -223,12 +281,62 @@ export default function Home() {
       setResult(payload);
       setActivePointIndex(null);
       setStatus(`Backtest complete for ${payload.holdings.length} holding${payload.holdings.length === 1 ? "" : "s"}.`);
+      if (typeof window !== "undefined") {
+        const query = serializePortfolio(submissionHoldings, submissionRange);
+        window.history.replaceState(null, "", `${window.location.pathname}?${query}`);
+      }
     } catch (error) {
       setStatus(error instanceof Error ? error.message : "Backtest failed");
     } finally {
       setIsLoading(false);
     }
   }
+
+  async function handleSubmit(event) {
+    event.preventDefault();
+    await submitPortfolio();
+  }
+
+  async function handleShare() {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    const url = `${window.location.origin}${window.location.pathname}?${serializePortfolio(holdings, range)}`;
+
+    try {
+      await navigator.clipboard.writeText(url);
+      setShareLabel("Link Copied");
+      setTimeout(() => setShareLabel("Copy Share Link"), 1800);
+    } catch {
+      setStatus("Unable to copy automatically. Copy the page URL directly.");
+    }
+  }
+
+  useEffect(() => {
+    if (hasLoadedSharedPortfolio.current || typeof window === "undefined") {
+      return;
+    }
+
+    hasLoadedSharedPortfolio.current = true;
+    const sharedPortfolio = parseSharedPortfolio(window.location.search);
+
+    if (!sharedPortfolio) {
+      return;
+    }
+
+    const sharedHoldings = sharedPortfolio.holdings.map((holding, index) => ({
+      id: `holding-${index + 1}`,
+      symbol: holding.symbol,
+      quantity: holding.quantity,
+      name: ""
+    }));
+
+    nextHoldingId.current = sharedHoldings.length + 1;
+    setHoldings(sharedHoldings);
+    setRange(sharedPortfolio.range);
+    submitPortfolio(sharedHoldings, sharedPortfolio.range);
+  }, []);
 
   function updateActivePoint(clientX) {
     if (!chart || !chartRef.current) {
@@ -278,9 +386,14 @@ export default function Home() {
             <h2>Portfolio Inputs</h2>
             <p>Search by ticker or company name, choose a suggestion, then add as many holdings as you want.</p>
           </div>
-          <button className="ghost-button" type="button" onClick={addHolding}>
-            Add Holding
-          </button>
+          <div className="header-actions">
+            <button className="ghost-button" type="button" onClick={handleShare}>
+              {shareLabel}
+            </button>
+            <button className="ghost-button" type="button" onClick={addHolding}>
+              Add Holding
+            </button>
+          </div>
         </div>
 
         <form onSubmit={handleSubmit}>
