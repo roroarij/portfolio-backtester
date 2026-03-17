@@ -5,8 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { buildChart } from "@/lib/chart";
 
 const defaultHoldings = [
-  { id: "holding-1", symbol: "AAPL", quantity: "10" },
-  { id: "holding-2", symbol: "MSFT", quantity: "6" }
+  { id: "holding-1", symbol: "AAPL", quantity: "10" }
 ];
 
 const ranges = [
@@ -162,7 +161,7 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState(null);
   const [activePointIndex, setActivePointIndex] = useState(null);
-  const nextHoldingId = useRef(3);
+  const nextHoldingId = useRef(2);
   const chartRef = useRef(null);
 
   const chart = result ? buildChart(result.series) : null;
