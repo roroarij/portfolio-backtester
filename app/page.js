@@ -167,6 +167,14 @@ export default function Home() {
 
   const chart = result ? buildChart(result.series) : null;
   const activePoint = chart && activePointIndex !== null ? chart.coords[activePointIndex] : null;
+  const activeChange =
+    result && activePoint
+      ? Number((activePoint.value - result.summary.startValue).toFixed(2))
+      : null;
+  const activeChangePct =
+    result && activePoint
+      ? Number((((activePoint.value - result.summary.startValue) / result.summary.startValue) * 100).toFixed(2))
+      : null;
   const tablePoints = result
     ? result.series.filter((_, index) => index % Math.max(1, Math.floor(result.series.length / 18)) === 0 || index === result.series.length - 1)
     : [];
@@ -333,15 +341,15 @@ export default function Home() {
             <strong>{activePoint ? formatCurrency(activePoint.value) : result ? formatCurrency(result.summary.endValue) : "$0.00"}</strong>
           </article>
           <article className="summary-card">
-            <span>Net change</span>
-            <strong className={result && result.summary.change >= 0 ? "positive" : "negative"}>
-              {result ? formatCurrency(result.summary.change) : "$0.00"}
+            <span>{activePoint ? "Change vs start" : "Net change"}</span>
+            <strong className={(activePoint ? activeChange : result?.summary.change) >= 0 ? "positive" : "negative"}>
+              {activePoint ? formatCurrency(activeChange) : result ? formatCurrency(result.summary.change) : "$0.00"}
             </strong>
           </article>
           <article className="summary-card">
-            <span>Return</span>
-            <strong className={result && result.summary.change >= 0 ? "positive" : "negative"}>
-              {result ? formatPercent(result.summary.changePct) : "0.00%"}
+            <span>{activePoint ? "Return vs start" : "Return"}</span>
+            <strong className={(activePoint ? activeChangePct : result?.summary.changePct) >= 0 ? "positive" : "negative"}>
+              {activePoint ? formatPercent(activeChangePct) : result ? formatPercent(result.summary.changePct) : "0.00%"}
             </strong>
           </article>
         </div>
