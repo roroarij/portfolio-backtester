@@ -302,6 +302,34 @@ select:focus {
   padding: 1rem;
 }
 
+.chart-viewport {
+  position: relative;
+}
+
+.chart-tooltip {
+  position: absolute;
+  top: 0.9rem;
+  left: 1rem;
+  z-index: 2;
+  display: grid;
+  gap: 0.15rem;
+  padding: 0.8rem 0.9rem;
+  border-radius: 14px;
+  background: rgba(255, 252, 244, 0.96);
+  border: 1px solid rgba(56, 42, 24, 0.1);
+  box-shadow: 0 12px 28px rgba(44, 26, 8, 0.12);
+  pointer-events: none;
+}
+
+.chart-tooltip strong {
+  font-size: 1rem;
+}
+
+.chart-tooltip span {
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
 .chart-scale,
 .chart-footer {
   display: flex;
@@ -321,6 +349,7 @@ svg {
   width: 100%;
   height: 420px;
   overflow: visible;
+  touch-action: none;
 }
 
 .chart-line {
@@ -333,6 +362,18 @@ svg {
 
 .chart-area {
   fill: url(#chart-fill);
+}
+
+.chart-guide {
+  stroke: rgba(140, 52, 20, 0.38);
+  stroke-width: 2;
+  stroke-dasharray: 6 8;
+}
+
+.chart-marker {
+  fill: #fffaf2;
+  stroke: var(--accent-strong);
+  stroke-width: 4;
 }
 
 .table-card {

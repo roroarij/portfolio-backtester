@@ -29,6 +29,14 @@ function formatPercent(value) {
   return `${value >= 0 ? "+" : ""}${value.toFixed(2)}%`;
 }
 
+function formatDayLabel(value) {
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric"
+  }).format(new Date(`${value}T00:00:00Z`));
+}
+
 function HoldingRow({ holding, onUpdate, onRemove }) {
   const [suggestions, setSuggestions] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
@@ -153,9 +161,12 @@ export default function Home() {
   const [status, setStatus] = useState("Run a backtest to populate the chart.");
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState(null);
+  const [activePointIndex, setActivePointIndex] = useState(null);
   const nextHoldingId = useRef(3);
+  const chartRef = useRef(null);
 
   const chart = result ? buildChart(result.series) : null;
+  const activePoint = chart && activePointIndex !== null ? chart.coords[activePointIndex] : null;
   const tablePoints = result
     ? result.series.filter((_, index) => index % Math.max(1, Math.floor(result.series.length / 18)) === 0 || index === result.series.length - 1)
     : [];
@@ -203,12 +214,45 @@ export default function Home() {
       }
 
       setResult(payload);
+      setActivePointIndex(null);
       setStatus(`Backtest complete for ${payload.holdings.length} holding${payload.holdings.length === 1 ? "" : "s"}.`);
     } catch (error) {
       setStatus(error instanceof Error ? error.message : "Backtest failed");
     } finally {
       setIsLoading(false);
     }
+  }
+
+  function updateActivePoint(clientX) {
+    if (!chart || !chartRef.current) {
+      return;
+    }
+
+    const bounds = chartRef.current.getBoundingClientRect();
+    const relativeX = ((clientX - bounds.left) / bounds.width) * chart.width;
+    const clampedX = Math.min(chart.width - chart.padding, Math.max(chart.padding, relativeX));
+    const nearestIndex = chart.coords.reduce((closestIndex, point, index, points) => {
+      if (index === 0) {
+        return 0;
+      }
+
+      return Math.abs(point.x - clampedX) < Math.abs(points[closestIndex].x - clampedX) ? index : closestIndex;
+    }, 0);
+
+    setActivePointIndex(nearestIndex);
+  }
+
+  function handleChartPointerMove(event) {
+    updateActivePoint(event.clientX);
+  }
+
+  function handleChartTouchMove(event) {
+    const touch = event.touches[0];
+    if (!touch) {
+      return;
+    }
+
+    updateActivePoint(touch.clientX);
   }
 
   return (
@@ -281,12 +325,12 @@ export default function Home() {
 
         <div className="summary-grid">
           <article className="summary-card">
-            <span>Starting value</span>
-            <strong>{result ? formatCurrency(result.summary.startValue) : "$0.00"}</strong>
+            <span>{activePoint ? "Selected date" : "Starting value"}</span>
+            <strong>{activePoint ? formatDayLabel(activePoint.date) : result ? formatCurrency(result.summary.startValue) : "$0.00"}</strong>
           </article>
           <article className="summary-card">
-            <span>Ending value</span>
-            <strong>{result ? formatCurrency(result.summary.endValue) : "$0.00"}</strong>
+            <span>{activePoint ? "Selected value" : "Ending value"}</span>
+            <strong>{activePoint ? formatCurrency(activePoint.value) : result ? formatCurrency(result.summary.endValue) : "$0.00"}</strong>
           </article>
           <article className="summary-card">
             <span>Net change</span>
@@ -307,18 +351,43 @@ export default function Home() {
             <span>{chart ? formatCurrency(chart.max) : "$0.00"}</span>
             <span>{chart ? formatCurrency(chart.min) : "$0.00"}</span>
           </div>
-          <svg viewBox="0 0 960 420" preserveAspectRatio="none" aria-label="Portfolio history chart">
-            <defs>
-              <linearGradient id="chart-fill" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="rgba(246, 183, 60, 0.45)" />
-                <stop offset="100%" stopColor="rgba(246, 183, 60, 0.02)" />
-              </linearGradient>
-            </defs>
-            {chart ? <path className="chart-area" d={chart.areaPath} /> : null}
-            {chart ? <path className="chart-line" d={chart.linePath} /> : null}
-          </svg>
+          <div className="chart-viewport">
+            {activePoint ? (
+              <div className="chart-tooltip">
+                <strong>{formatCurrency(activePoint.value)}</strong>
+                <span>{formatDayLabel(activePoint.date)}</span>
+              </div>
+            ) : null}
+            <svg
+              ref={chartRef}
+              viewBox="0 0 960 420"
+              preserveAspectRatio="none"
+              aria-label="Portfolio history chart"
+              onPointerMove={handleChartPointerMove}
+              onPointerEnter={handleChartPointerMove}
+              onPointerLeave={() => setActivePointIndex(null)}
+              onTouchStart={handleChartTouchMove}
+              onTouchMove={handleChartTouchMove}
+              onTouchEnd={() => setActivePointIndex(null)}
+            >
+              <defs>
+                <linearGradient id="chart-fill" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="rgba(246, 183, 60, 0.45)" />
+                  <stop offset="100%" stopColor="rgba(246, 183, 60, 0.02)" />
+                </linearGradient>
+              </defs>
+              {chart ? <path className="chart-area" d={chart.areaPath} /> : null}
+              {chart ? <path className="chart-line" d={chart.linePath} /> : null}
+              {activePoint ? (
+                <>
+                  <line className="chart-guide" x1={activePoint.x} x2={activePoint.x} y1={chart.padding} y2={chart.height - chart.padding} />
+                  <circle className="chart-marker" cx={activePoint.x} cy={activePoint.y} r="7" />
+                </>
+              ) : null}
+            </svg>
+          </div>
           <div className="chart-footer">
-            <span>{result ? result.startDate : "Start"}</span>
+            <span>{activePoint ? formatDayLabel(activePoint.date) : result ? result.startDate : "Start"}</span>
             <span>{result ? result.endDate : "End"}</span>
           </div>
         </div>
