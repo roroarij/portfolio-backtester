@@ -97,11 +97,12 @@ function HoldingRow({ holding, onUpdate, onRemove }) {
   const [suggestions, setSuggestions] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
 
   useEffect(() => {
     const query = holding.symbol.trim();
 
-    if (query.length < 1) {
+    if (!isFocused || query.length < 1) {
       setSuggestions([]);
       setIsSearching(false);
       setIsOpen(false);
@@ -139,7 +140,7 @@ function HoldingRow({ holding, onUpdate, onRemove }) {
       controller.abort();
       clearTimeout(timeoutId);
     };
-  }, [holding.symbol]);
+  }, [holding.symbol, isFocused]);
 
   function handleSelectSuggestion(suggestion) {
     onUpdate("symbol", suggestion.symbol);
@@ -165,9 +166,16 @@ function HoldingRow({ holding, onUpdate, onRemove }) {
               onUpdate("name", "");
             }}
             onFocus={() => {
+              setIsFocused(true);
               if (suggestions.length) {
                 setIsOpen(true);
               }
+            }}
+            onBlur={() => {
+              setTimeout(() => {
+                setIsFocused(false);
+                setIsOpen(false);
+              }, 120);
             }}
             required
           />
