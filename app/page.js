@@ -18,6 +18,14 @@ const ranges = [
 
 const allowedRanges = new Set(ranges.map((option) => option.value));
 
+function trackEvent(name, params = {}) {
+  if (typeof window === "undefined" || typeof window.gtag !== "function") {
+    return;
+  }
+
+  window.gtag("event", name, params);
+}
+
 function formatCurrency(value) {
   return new Intl.NumberFormat("en-US", {
     style: "currency",
@@ -93,7 +101,7 @@ function parseSharedPortfolio(search) {
   };
 }
 
-function HoldingRow({ holding, onUpdate, onRemove }) {
+function HoldingRow({ holding, onUpdate, onRemove, onSelectTicker, onFocusField }) {
   const [suggestions, setSuggestions] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -145,6 +153,7 @@ function HoldingRow({ holding, onUpdate, onRemove }) {
   function handleSelectSuggestion(suggestion) {
     onUpdate("symbol", suggestion.symbol);
     onUpdate("name", suggestion.name);
+    onSelectTicker(suggestion.symbol);
     setSuggestions([]);
     setIsOpen(false);
   }
@@ -167,6 +176,7 @@ function HoldingRow({ holding, onUpdate, onRemove }) {
             }}
             onFocus={() => {
               setIsFocused(true);
+              onFocusField("ticker");
               if (suggestions.length) {
                 setIsOpen(true);
               }
@@ -209,6 +219,7 @@ function HoldingRow({ holding, onUpdate, onRemove }) {
           placeholder="10"
           value={holding.quantity}
           onChange={(event) => onUpdate("quantity", event.target.value)}
+          onFocus={() => onFocusField("quantity")}
           required
         />
       </label>
@@ -230,6 +241,7 @@ export default function Home() {
   const nextHoldingId = useRef(2);
   const chartRef = useRef(null);
   const hasLoadedSharedPortfolio = useRef(false);
+  const hasTrackedChartInteraction = useRef(false);
 
   const chart = result ? buildChart(result.series) : null;
   const activePoint = chart && activePointIndex !== null ? chart.coords[activePointIndex] : null;
@@ -253,6 +265,9 @@ export default function Home() {
     const id = `holding-${nextHoldingId.current}`;
     nextHoldingId.current += 1;
     setHoldings((current) => [...current, { id, symbol: "", name: "", quantity: "" }]);
+    trackEvent("add_holding_clicked", {
+      holdings_after_add: holdings.length + 1
+    });
   }
 
   function removeHolding(id) {
@@ -261,6 +276,9 @@ export default function Home() {
         return [{ ...current[0], symbol: "", name: "", quantity: "" }];
       }
 
+      trackEvent("remove_holding_clicked", {
+        holdings_after_remove: current.length - 1
+      });
       return current.filter((holding) => holding.id !== id);
     });
   }
@@ -288,7 +306,14 @@ export default function Home() {
 
       setResult(payload);
       setActivePointIndex(null);
+      hasTrackedChartInteraction.current = false;
       setStatus(`Backtest complete for ${payload.holdings.length} holding${payload.holdings.length === 1 ? "" : "s"}.`);
+      trackEvent("backtest_run", {
+        holdings_count: payload.holdings.length,
+        lookback_range: submissionRange,
+        start_date: payload.startDate,
+        end_date: payload.endDate
+      });
       if (typeof window !== "undefined") {
         const query = serializePortfolio(submissionHoldings, submissionRange);
         window.history.replaceState(null, "", `${window.location.pathname}?${query}`);
@@ -315,6 +340,10 @@ export default function Home() {
     try {
       await navigator.clipboard.writeText(url);
       setShareLabel("Link Copied");
+      trackEvent("share_link_copied", {
+        holdings_count: normalizeShareHoldings(holdings).length,
+        lookback_range: range
+      });
       setTimeout(() => setShareLabel("Copy Share Link"), 1800);
     } catch {
       setStatus("Unable to copy automatically. Copy the page URL directly.");
@@ -363,6 +392,13 @@ export default function Home() {
     }, 0);
 
     setActivePointIndex(nearestIndex);
+    if (!hasTrackedChartInteraction.current) {
+      hasTrackedChartInteraction.current = true;
+      trackEvent("chart_scrub_started", {
+        holdings_count: result?.holdings?.length || 0,
+        lookback_range: range
+      });
+    }
   }
 
   function handleChartPointerMove(event) {
@@ -376,6 +412,18 @@ export default function Home() {
     }
 
     updateActivePoint(touch.clientX);
+  }
+
+  function handleTickerSelected(symbol) {
+    trackEvent("ticker_selected", {
+      ticker_symbol: symbol
+    });
+  }
+
+  function handleFieldFocus(fieldName) {
+    trackEvent("portfolio_field_focused", {
+      field_name: fieldName
+    });
   }
 
   return (
@@ -412,6 +460,8 @@ export default function Home() {
                 key={holding.id}
                 onUpdate={(field, value) => updateHolding(holding.id, field, value)}
                 onRemove={() => removeHolding(holding.id)}
+                onSelectTicker={handleTickerSelected}
+                onFocusField={handleFieldFocus}
               />
             ))}
           </div>
