@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { getFeaturedPortfolios } from "@/lib/site-data";
+import { getTickerPageData } from "@/lib/stocks";
 
 const coreTools = [
   {
@@ -11,12 +12,12 @@ const coreTools = [
   },
   {
     title: "DCA Calculator",
-    description: "Planned next. Compare lump-sum and recurring investment outcomes.",
+    description: "Compare recurring purchases against lump-sum investing.",
     href: "/tools"
   },
   {
     title: "Options Strategy Calculator",
-    description: "Planned next. Model payoff curves and compare common options structures.",
+    description: "Model payoff curves and compare common options structures.",
     href: "/tools"
   }
 ];
@@ -44,9 +45,34 @@ export const metadata = {
   description: "Portfolio backtesting, stock discovery, market tools, and shareable portfolio analysis."
 };
 
+function formatCurrency(value) {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    maximumFractionDigits: 2
+  }).format(value);
+}
+
+function formatPercent(value) {
+  return `${value >= 0 ? "+" : ""}${value.toFixed(2)}%`;
+}
+
+async function loadQuotes(symbols) {
+  const results = await Promise.allSettled(symbols.map((symbol) => getTickerPageData(symbol)));
+
+  return results
+    .map((result, index) => (result.status === "fulfilled" ? result.value : null))
+    .filter(Boolean);
+}
+
 export default async function HomePage({ searchParams }) {
   const params = await searchParams;
   const featuredPortfolios = getFeaturedPortfolios();
+  const [indexes, trendingStocks, commodities] = await Promise.all([
+    loadQuotes(["SPY", "QQQ", "DIA", "IWM"]),
+    loadQuotes(["AAPL", "NVDA", "MSFT", "TSLA"]),
+    loadQuotes(["GLD", "SLV", "USO", "UNG"])
+  ]);
 
   if (params?.h) {
     const query = new URLSearchParams();
@@ -68,10 +94,10 @@ export default async function HomePage({ searchParams }) {
   return (
     <main className="app-shell">
       <section className="hero hero-home">
-        <p className="eyebrow">Finance Utility Platform</p>
-        <h1>Backtest portfolios, discover setups, and expand into market tools.</h1>
+        <p className="eyebrow">Stocksscreener</p>
+        <h1>Backtest portfolios, screen markets, and research stocks from one hub.</h1>
         <p className="hero-copy">
-          Stocksscreener is evolving from a single backtester into a broader finance app for portfolio discovery, ticker research, and high-intent tools.
+          Use the backtester for shareable portfolio analysis, browse discoverable setups, and move into ticker-level chart, fundamentals, and news views from the same platform.
         </p>
         <div className="hero-actions">
           <Link className="primary-button" href="/tools/portfolio-backtester">
@@ -86,8 +112,63 @@ export default async function HomePage({ searchParams }) {
       <section className="panel feature-grid-panel">
         <div className="section-header">
           <div>
+            <h2>Major Indexes</h2>
+            <p>Quick benchmark context before moving into single-stock or portfolio analysis.</p>
+          </div>
+        </div>
+        <div className="market-strip">
+          {indexes.map((quote) => (
+            <Link className="quote-card" href={`/stocks/${quote.ticker}`} key={quote.ticker}>
+              <h3>{quote.ticker}</h3>
+              <p className="quote-price">{formatCurrency(quote.latestClose)}</p>
+              <p>{formatPercent(quote.changePct)} over {quote.range}</p>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      <section className="panel feature-grid-panel">
+        <div className="section-header">
+          <div>
+            <h2>Trending Stocks</h2>
+            <p>Fast entry points into the stock hub, interactive chart tab, and fundamentals tab.</p>
+          </div>
+        </div>
+        <div className="market-strip">
+          {trendingStocks.map((quote) => (
+            <Link className="quote-card" href={`/stocks/${quote.ticker}`} key={quote.ticker}>
+              <h3>{quote.ticker}</h3>
+              <p className="quote-price">{formatCurrency(quote.latestClose)}</p>
+              <p>{quote.name}</p>
+              <p>{formatPercent(quote.changePct)} over {quote.range}</p>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      <section className="panel feature-grid-panel">
+        <div className="section-header">
+          <div>
+            <h2>Commodity Proxies</h2>
+            <p>Macro-linked ETFs that help connect commodity context to portfolio construction and comparison.</p>
+          </div>
+        </div>
+        <div className="market-strip">
+          {commodities.map((quote) => (
+            <Link className="quote-card" href={`/stocks/${quote.ticker}`} key={quote.ticker}>
+              <h3>{quote.ticker}</h3>
+              <p className="quote-price">{formatCurrency(quote.latestClose)}</p>
+              <p>{formatPercent(quote.changePct)} over {quote.range}</p>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      <section className="panel feature-grid-panel">
+        <div className="section-header">
+          <div>
             <h2>Featured Portfolios</h2>
-            <p>These are the first discoverable portfolio templates. Later these will become real saved portfolio entities under `/portfolio/[slug]`.</p>
+            <p>These are the first discoverable portfolio templates and published portfolio entities under `/portfolio/[slug]`.</p>
           </div>
         </div>
         <div className="feature-grid">
