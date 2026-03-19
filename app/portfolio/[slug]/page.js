@@ -1,7 +1,22 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { buildPortfolioHistory } from "@/lib/portfolio";
 import { getFeaturedPortfolioBySlug, getFeaturedPortfolios } from "@/lib/site-data";
+
+export const revalidate = 3600;
+
+function formatCurrency(value) {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    maximumFractionDigits: 2
+  }).format(value);
+}
+
+function formatPercent(value) {
+  return `${value >= 0 ? "+" : ""}${value.toFixed(2)}%`;
+}
 
 export function generateStaticParams() {
   return getFeaturedPortfolios().map((portfolio) => ({
@@ -33,6 +48,14 @@ export default async function PortfolioSlugPage({ params }) {
     notFound();
   }
 
+  let history;
+
+  try {
+    history = await buildPortfolioHistory(portfolio.holdings, portfolio.range);
+  } catch {
+    notFound();
+  }
+
   return (
     <main className="app-shell">
       <section className="hero">
@@ -52,8 +75,47 @@ export default async function PortfolioSlugPage({ params }) {
       <section className="panel feature-grid-panel">
         <div className="section-header">
           <div>
+            <h2>Performance Snapshot</h2>
+            <p>This portfolio page now computes live stats from the same historical data engine used by the tool route.</p>
+          </div>
+        </div>
+        <div className="feature-grid">
+          <article className="feature-card">
+            <h3>Start Value</h3>
+            <p>{formatCurrency(history.summary.startValue)}</p>
+          </article>
+          <article className="feature-card">
+            <h3>End Value</h3>
+            <p>{formatCurrency(history.summary.endValue)}</p>
+          </article>
+          <article className="feature-card">
+            <h3>Total Change</h3>
+            <p>
+              {formatCurrency(history.summary.change)} ({formatPercent(history.summary.changePct)})
+            </p>
+          </article>
+          <article className="feature-card">
+            <h3>Date Range</h3>
+            <p>
+              {history.startDate} to {history.endDate}
+            </p>
+          </article>
+          <article className="feature-card">
+            <h3>Lookback</h3>
+            <p>{history.range}</p>
+          </article>
+          <article className="feature-card">
+            <h3>Data Source</h3>
+            <p>Yahoo Finance historical chart data, shared with the backtester and stock routes.</p>
+          </article>
+        </div>
+      </section>
+
+      <section className="panel feature-grid-panel">
+        <div className="section-header">
+          <div>
             <h2>Holdings</h2>
-            <p>This is the first canonical portfolio-entity route. The next step is to attach saved stats and editorial summaries to these pages.</p>
+            <p>This is now a live portfolio entity page with computed stats, while still linking back into the interactive tool.</p>
           </div>
         </div>
         <div className="feature-grid">
@@ -77,7 +139,7 @@ export default async function PortfolioSlugPage({ params }) {
         <div className="feature-grid">
           <article className="feature-card">
             <h3>Default Range</h3>
-            <p>{portfolio.range}</p>
+            <p>{history.range}</p>
           </article>
           <article className="feature-card">
             <h3>Tags</h3>
