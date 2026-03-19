@@ -1,12 +1,16 @@
 import Script from "next/script";
+import Link from "next/link";
 
 import "./globals.css";
 
 const measurementId = "G-0FSHK07S04";
 
 export const metadata = {
-  title: "Portfolio Backtester",
-  description: "Build a stock portfolio and chart its historical value."
+  title: {
+    default: "Stocksscreener",
+    template: "%s"
+  },
+  description: "Portfolio backtesting, market tools, stock discovery, and shareable finance utility pages."
 };
 
 export default function RootLayout({ children }) {
@@ -22,6 +26,20 @@ export default function RootLayout({ children }) {
             window.gtag('config', '${measurementId}');
           `}
         </Script>
+        <header className="site-header">
+          <div className="site-shell">
+            <Link className="site-brand" href="/">
+              Stocksscreener
+            </Link>
+            <nav className="site-nav" aria-label="Primary">
+              <Link href="/">Home</Link>
+              <Link href="/portfolio">Portfolios</Link>
+              <Link href="/markets">Markets</Link>
+              <Link href="/tools">Tools</Link>
+              <Link href="/discover">Discover</Link>
+            </nav>
+          </div>
+        </header>
         {children}
       </body>
     </html>

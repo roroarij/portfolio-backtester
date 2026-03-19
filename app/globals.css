@@ -32,6 +32,11 @@ body {
     linear-gradient(180deg, #f8f3e8 0%, var(--bg) 100%);
 }
 
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
 button,
 input,
 select {
@@ -43,6 +48,38 @@ button {
   cursor: pointer;
 }
 
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  backdrop-filter: blur(16px);
+  background: rgba(248, 243, 232, 0.82);
+  border-bottom: 1px solid rgba(56, 42, 24, 0.08);
+}
+
+.site-shell {
+  width: min(1180px, calc(100vw - 2rem));
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.9rem 0;
+}
+
+.site-brand {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.site-nav {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  color: var(--muted);
+}
+
 .app-shell {
   width: min(1180px, calc(100vw - 2rem));
   margin: 0 auto;
@@ -51,6 +88,17 @@ button {
 
 .hero {
   padding: 1rem 0 2rem;
+}
+
+.hero-home {
+  padding-top: 1.75rem;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+  margin-top: 1.35rem;
 }
 
 .eyebrow {
@@ -93,6 +141,44 @@ h1 {
 .controls-panel,
 .results-panel {
   padding: 1.5rem;
+}
+
+.feature-grid-panel {
+  padding: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.feature-card {
+  padding: 1.15rem;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.54);
+  border: 1px solid rgba(56, 42, 24, 0.08);
+}
+
+.feature-card h3 {
+  margin: 0 0 0.45rem;
+  font-size: 1.15rem;
+}
+
+.feature-card p {
+  margin: 0 0 1rem;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.feature-card a {
+  color: var(--accent-strong);
+  font-weight: 600;
+}
+
+.feature-card-meta {
+  margin-bottom: 0.45rem;
 }
 
 .results-panel {
@@ -465,6 +551,15 @@ tbody tr:nth-child(even) {
 }
 
 @media (max-width: 860px) {
+  .site-shell {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .feature-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .summary-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -521,6 +616,10 @@ tbody tr:nth-child(even) {
   }
 
   .summary-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .feature-grid {
     grid-template-columns: 1fr;
   }
 }
