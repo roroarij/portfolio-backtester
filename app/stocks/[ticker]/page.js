@@ -59,6 +59,9 @@ export default async function StockTickerPage({ params }) {
           <Link className="primary-button" href={`/tools/portfolio-backtester?h=${stock.ticker}:10&r=5y`}>
             Backtest {stock.ticker}
           </Link>
+          <Link className="ghost-button" href={`/stocks/${stock.ticker}/chart`}>
+            View chart
+          </Link>
           <Link className="ghost-button" href="/discover">
             Back to discover
           </Link>
@@ -108,6 +111,7 @@ export default async function StockTickerPage({ params }) {
             <article className="feature-card" key={section}>
               <h3>{section}</h3>
               <p>Planned ticker subroute under <code>/stocks/{stock.ticker}/{section}</code>.</p>
+              {section === "chart" ? <Link href={`/stocks/${stock.ticker}/chart`}>Open chart route</Link> : null}
             </article>
           ))}
         </div>
