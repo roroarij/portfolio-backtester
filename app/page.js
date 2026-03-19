@@ -566,6 +566,18 @@ export default function Home() {
             <span>{chart ? formatCurrency(chart.min) : "$0.00"}</span>
           </div>
           <div className="chart-viewport">
+            {activePoint ? (
+              <div
+                className="chart-tooltip chart-tooltip-inline"
+                style={{
+                  left: `${Math.min(chart.width - 88, Math.max(88, activePoint.x))}px`,
+                  top: `${Math.max(chart.padding + 8, activePoint.y - 18)}px`
+                }}
+              >
+                <strong>{formatCurrency(activePoint.value)}</strong>
+                <span>{formatDayLabel(activePoint.date)}</span>
+              </div>
+            ) : null}
             <svg
               ref={chartRef}
               viewBox="0 0 960 420"

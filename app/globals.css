@@ -313,6 +313,30 @@ select:focus {
   position: relative;
 }
 
+.chart-tooltip {
+  position: absolute;
+  z-index: 2;
+  display: grid;
+  gap: 0.1rem;
+  padding: 0.45rem 0.6rem;
+  border-radius: 10px;
+  background: rgba(255, 252, 244, 0.96);
+  border: 1px solid rgba(56, 42, 24, 0.12);
+  box-shadow: 0 8px 20px rgba(44, 26, 8, 0.12);
+  pointer-events: none;
+  transform: translate(-50%, -100%);
+  white-space: nowrap;
+}
+
+.chart-tooltip strong {
+  font-size: 0.9rem;
+}
+
+.chart-tooltip span {
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
 .chart-scale,
 .chart-footer {
   display: flex;
@@ -324,34 +348,36 @@ select:focus {
 
 .holding-snapshot-list {
   display: grid;
-  gap: 0.45rem;
-  padding: 0.85rem 0;
+  gap: 0.22rem;
+  padding: 0.5rem 0;
 }
 
 .holding-snapshot-item {
   display: flex;
-  align-items: flex-start;
-  gap: 0.55rem;
+  align-items: center;
+  gap: 0.45rem;
+  min-width: 0;
 }
 
 .holding-swatch {
-  width: 14px;
-  height: 14px;
-  margin-top: 0.18rem;
-  border-radius: 4px;
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
   flex: 0 0 auto;
 }
 
 .holding-snapshot-copy {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.2rem 0.4rem;
-  line-height: 1.25;
+  align-items: center;
+  gap: 0.28rem;
+  line-height: 1.1;
+  min-width: 0;
+  white-space: nowrap;
 }
 
 .holding-snapshot-copy strong,
 .holding-snapshot-copy span {
-  font-size: 0.76rem;
+  font-size: 0.72rem;
 }
 
 .holding-snapshot-copy span {
