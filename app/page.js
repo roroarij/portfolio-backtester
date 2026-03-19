@@ -1,23 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
-const featuredPortfolios = [
-  {
-    title: "Magnificent 7 Equal Weight",
-    description: "A shareable basket for testing concentrated mega-cap tech exposure.",
-    href: "/tools/portfolio-backtester?h=AAPL:10,MSFT:10,NVDA:10,AMZN:10,META:10,GOOGL:10,TSLA:10&r=5y"
-  },
-  {
-    title: "AAPL vs SPY Starter Compare",
-    description: "A simple benchmark-friendly setup for testing single-stock exposure against an index proxy.",
-    href: "/tools/portfolio-backtester?h=AAPL:10,SPY:10&r=5y"
-  },
-  {
-    title: "Semiconductor Tilt",
-    description: "A chip-heavy portfolio template designed for long-tail comparison and discovery pages.",
-    href: "/tools/portfolio-backtester?h=NVDA:10,AMD:10,AVGO:10,TSM:10&r=5y"
-  }
-];
+import { getFeaturedPortfolios } from "@/lib/site-data";
 
 const coreTools = [
   {
@@ -62,6 +46,7 @@ export const metadata = {
 
 export default async function HomePage({ searchParams }) {
   const params = await searchParams;
+  const featuredPortfolios = getFeaturedPortfolios();
 
   if (params?.h) {
     const query = new URLSearchParams();
@@ -110,7 +95,7 @@ export default async function HomePage({ searchParams }) {
             <article className="feature-card" key={item.title}>
               <h3>{item.title}</h3>
               <p>{item.description}</p>
-              <Link href={item.href}>Open template</Link>
+              <Link href={`/portfolio/${item.slug}`}>Open portfolio</Link>
             </article>
           ))}
         </div>

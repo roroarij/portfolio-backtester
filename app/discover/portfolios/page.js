@@ -1,25 +1,6 @@
 import Link from "next/link";
 
-const discoverPortfolios = [
-  {
-    slug: "magnificent-7-equal-weight",
-    title: "Magnificent 7 Equal Weight",
-    summary: "A concentrated mega-cap tech basket designed for high-intent portfolio comparison traffic.",
-    href: "/tools/portfolio-backtester?h=AAPL:10,MSFT:10,NVDA:10,AMZN:10,META:10,GOOGL:10,TSLA:10&r=5y"
-  },
-  {
-    slug: "aapl-vs-spy",
-    title: "AAPL vs SPY",
-    summary: "A benchmark-style comparison that should later become a real published portfolio entity.",
-    href: "/tools/portfolio-backtester?h=AAPL:10,SPY:10&r=5y"
-  },
-  {
-    slug: "semiconductor-basket",
-    title: "Semiconductor Basket",
-    summary: "A chip-focused template that bridges ticker traffic, portfolio comparison, and discovery surfaces.",
-    href: "/tools/portfolio-backtester?h=NVDA:10,AMD:10,AVGO:10,TSM:10&r=5y"
-  }
-];
+import { getFeaturedPortfolios } from "@/lib/site-data";
 
 export const metadata = {
   title: "Discover Portfolios | Stocksscreener",
@@ -27,6 +8,8 @@ export const metadata = {
 };
 
 export default function DiscoverPortfoliosPage() {
+  const discoverPortfolios = getFeaturedPortfolios();
+
   return (
     <main className="app-shell">
       <section className="hero">
@@ -43,7 +26,7 @@ export default function DiscoverPortfoliosPage() {
             <article className="feature-card" key={item.slug}>
               <h3>{item.title}</h3>
               <p>{item.summary}</p>
-              <Link href={item.href}>Open portfolio template</Link>
+              <Link href={`/portfolio/${item.slug}`}>Open portfolio</Link>
             </article>
           ))}
         </div>
