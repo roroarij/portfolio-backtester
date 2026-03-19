@@ -28,7 +28,7 @@ export default function MarketsPage() {
           {marketSections.map((section) => (
             <article className="feature-card" key={section}>
               <h3>{section}</h3>
-              <p>Planned market surface.</p>
+              <p>A market browse surface to connect macro context to stock and portfolio routes.</p>
               <Link href="/">Back to home</Link>
             </article>
           ))}

@@ -9,21 +9,21 @@ const tools = [
   },
   {
     title: "DCA Calculator",
-    description: "Planned. Compare recurring purchases against lump-sum investing.",
+    description: "Compare recurring purchases against lump-sum investing.",
     href: "/",
-    status: "Planned"
+    status: "Roadmap"
   },
   {
     title: "Options Strategy Calculator",
-    description: "Planned. Model payoff curves for calls, puts, spreads, and income structures.",
+    description: "Model payoff curves for calls, puts, spreads, and income structures.",
     href: "/",
-    status: "Planned"
+    status: "Roadmap"
   },
   {
     title: "Position Size Calculator",
-    description: "Planned. Calculate exposure and sizing from risk limits and stop distance.",
+    description: "Calculate exposure and sizing from risk limits and stop distance.",
     href: "/",
-    status: "Planned"
+    status: "Roadmap"
   }
 ];
 
@@ -39,7 +39,7 @@ export default function ToolsPage() {
         <p className="eyebrow">Tools</p>
         <h1>Build the utility layer first.</h1>
         <p className="hero-copy">
-          These tools are the highest-intent entry points for the site. The portfolio backtester is live; the rest are the next planned surfaces.
+          These tools are the highest-intent entry points for the site. The portfolio backtester is live, and the rest of the tool cluster is queued behind the same route model.
         </p>
       </section>
 
@@ -52,7 +52,7 @@ export default function ToolsPage() {
               </div>
               <h3>{tool.title}</h3>
               <p>{tool.description}</p>
-              <Link href={tool.href}>{tool.status === "Live" ? "Open tool" : "Back to roadmap"}</Link>
+              <Link href={tool.href}>{tool.status === "Live" ? "Open tool" : "View hub"}</Link>
             </article>
           ))}
         </div>

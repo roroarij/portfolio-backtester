@@ -53,7 +53,7 @@ export default async function StockTickerPage({ params }) {
           {stock.name}
         </h1>
         <p className="hero-copy">
-          A first-pass stock hub backed by the same Yahoo Finance source used for the backtesting tool. This is the foundation for future chart, fundamentals, news, and options routes.
+          This stock hub is backed by the same Yahoo Finance source used for the backtesting tool and now links directly into chart and fundamentals views.
         </p>
         <div className="hero-actions">
           <Link className="primary-button" href={`/tools/portfolio-backtester?h=${stock.ticker}:10&r=5y`}>
@@ -61,6 +61,9 @@ export default async function StockTickerPage({ params }) {
           </Link>
           <Link className="ghost-button" href={`/stocks/${stock.ticker}/chart`}>
             View chart
+          </Link>
+          <Link className="ghost-button" href={`/stocks/${stock.ticker}/fundamentals`}>
+            View fundamentals
           </Link>
           <Link className="ghost-button" href="/discover">
             Back to discover
@@ -102,16 +105,23 @@ export default async function StockTickerPage({ params }) {
       <section className="panel feature-grid-panel">
         <div className="section-header">
           <div>
-            <h2>Next Route Surfaces</h2>
-            <p>This page should expand into a real stock section with richer subroutes once the base entity route is stable.</p>
+            <h2>Stock Routes</h2>
+            <p>The stock section now has live overview, chart, and fundamentals routes. Additional sections can follow the same entity model.</p>
           </div>
         </div>
         <div className="feature-grid">
           {["chart", "technical-analysis", "fundamentals", "options", "price-targets", "filings", "insider-trades", "news"].map((section) => (
             <article className="feature-card" key={section}>
               <h3>{section}</h3>
-              <p>Planned ticker subroute under <code>/stocks/{stock.ticker}/{section}</code>.</p>
+              <p>
+                {section === "chart"
+                  ? "Live price-history route for this ticker."
+                  : section === "fundamentals"
+                    ? "Live fundamentals route for valuation, growth, and company profile."
+                    : `Reserved route under /stocks/${stock.ticker}/${section}.`}
+              </p>
               {section === "chart" ? <Link href={`/stocks/${stock.ticker}/chart`}>Open chart route</Link> : null}
+              {section === "fundamentals" ? <Link href={`/stocks/${stock.ticker}/fundamentals`}>Open fundamentals route</Link> : null}
             </article>
           ))}
         </div>

@@ -11,7 +11,7 @@ const portfolioStates = [
   },
   {
     title: "Published Portfolio Entities",
-    description: "The next step: save a portfolio record with title, slug, tags, summary, and derived stats."
+    description: "Portfolio records with title, slug, tags, summary, and derived stats."
   }
 ];
 
@@ -27,7 +27,7 @@ export default function PortfolioPage() {
         <p className="eyebrow">Portfolios</p>
         <h1>Portfolio routes should represent real entities, not only tool state.</h1>
         <p className="hero-copy">
-          The tool now lives under <code>/tools/portfolio-backtester</code>. This section is reserved for discoverable, published, and eventually user-saved portfolios.
+          The tool now lives under <code>/tools/portfolio-backtester</code>. This section is for discoverable and published portfolio entities that can stand on their own.
         </p>
         <div className="hero-actions">
           <Link className="primary-button" href="/discover/portfolios">

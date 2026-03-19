@@ -16,7 +16,7 @@ export default function DiscoverPortfoliosPage() {
         <p className="eyebrow">Discover</p>
         <h1>Featured portfolio setups worth browsing and sharing.</h1>
         <p className="hero-copy">
-          This is the first discovery surface. Today it links into the live backtester. Next it should upgrade into real published portfolio pages under <code>/portfolio/[slug]</code>.
+          Discoverable portfolios now link into real published routes under <code>/portfolio/[slug]</code> and also open directly in the live backtester.
         </p>
       </section>
 
