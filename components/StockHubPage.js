@@ -4,12 +4,13 @@ import { notFound } from "next/navigation";
 import StockPriceChart from "@/components/StockPriceChart";
 import { getTickerFundamentalsData, getTickerNews, getTickerTechnicalAnalysis } from "@/lib/stocks";
 
-const views = ["overview", "chart", "technical-analysis", "fundamentals", "news"];
+const views = ["overview", "chart", "technical-analysis", "fundamentals", "leadership", "news"];
 const viewLabels = {
   overview: "Overview",
   chart: "Chart",
   "technical-analysis": "Technical Analysis",
   fundamentals: "Fundamentals",
+  leadership: "Leadership",
   news: "News"
 };
 
@@ -101,6 +102,10 @@ function getViewDescription(stock, selectedView) {
 
   if (selectedView === "fundamentals") {
     return `This fundamentals view focuses on valuation, growth, margins, and company profile data for ${stock.ticker}.`;
+  }
+
+  if (selectedView === "leadership") {
+    return `This leadership view lists the top executives currently surfaced by the company profile source for ${stock.ticker}.`;
   }
 
   if (selectedView === "news") {
@@ -332,6 +337,29 @@ export default async function StockHubPage({ ticker, selectedView = "overview" }
               <h3>Return on Equity</h3>
               <p>{formatPercent(stock.returnOnEquity)}</p>
             </article>
+          </div>
+        ) : null}
+
+        {selectedView === "leadership" ? (
+          <div className="feature-grid">
+            {stock.leadership.length ? (
+              stock.leadership.map((leader) => (
+                <article className="feature-card" key={`${leader.name}-${leader.title}`}>
+                  <h3>{leader.name || "Unknown executive"}</h3>
+                  <p>{leader.title || "Title not available"}</p>
+                  <p>
+                    {leader.age ? `Age ${leader.age}` : "Age not available"}
+                    {leader.yearBorn ? ` • Born ${leader.yearBorn}` : ""}
+                  </p>
+                  {Number.isFinite(leader.totalPay) ? <p>{formatCurrency(leader.totalPay)} total pay</p> : null}
+                </article>
+              ))
+            ) : (
+              <article className="feature-card">
+                <h3>No leadership data available</h3>
+                <p>This source did not return company officers for this ticker right now.</p>
+              </article>
+            )}
           </div>
         ) : null}
 
