@@ -276,21 +276,32 @@ export default function Home() {
   const activePointHoldings = activePoint?.holdings || [];
   const activeTooltipLeft = activePoint ? `${(activePoint.x / chart.width) * 100}%` : "50%";
   const activeTooltipTop = activePoint ? `${Math.max(chart.padding + 8, activePoint.y - 18)}px` : "0px";
-  const activeHoldingLegendItems = activePointHoldings.map((holding, index) => {
-    const color = holdingPalette[index % holdingPalette.length];
+
+  function renderHoldingLegend(className = "holding-snapshot-list") {
+    if (!activePointHoldings.length) {
+      return null;
+    }
 
     return (
-      <div className="holding-snapshot-item" key={`${activePoint?.date || "point"}-${holding.symbol}`}>
-        <span className="holding-swatch" style={{ backgroundColor: color }} aria-hidden="true" />
-        <div className="holding-snapshot-copy">
-          <strong style={{ color }}>{holding.symbol}</strong>
-          <span>{formatShareCount(holding.quantity)} sh</span>
-          <span>{formatCurrency(holding.value)}</span>
-          <span>@ {formatCurrency(holding.close)}</span>
-        </div>
+      <div className={className}>
+        {activePointHoldings.map((holding, index) => {
+          const color = holdingPalette[index % holdingPalette.length];
+
+          return (
+            <div className="holding-snapshot-item" key={`${className}-${activePoint?.date || "point"}-${holding.symbol}`}>
+              <span className="holding-swatch" style={{ backgroundColor: color }} aria-hidden="true" />
+              <div className="holding-snapshot-copy">
+                <strong style={{ color }}>{holding.symbol}</strong>
+                <span>{formatShareCount(holding.quantity)} sh</span>
+                <span>{formatCurrency(holding.value)}</span>
+                <span>@ {formatCurrency(holding.close)}</span>
+              </div>
+            </div>
+          );
+        })}
       </div>
     );
-  });
+  }
 
   function updateHolding(id, field, value) {
     setHoldings((current) => current.map((holding) => (holding.id === id ? { ...holding, [field]: value } : holding)));
@@ -562,9 +573,7 @@ export default function Home() {
         <div className="chart-card">
           <div className="chart-scale">
             <span>{chart ? formatCurrency(chart.max) : "$0.00"}</span>
-            {activePointHoldings.length ? (
-              <div className="holding-snapshot-list">{activeHoldingLegendItems}</div>
-            ) : null}
+            {renderHoldingLegend()}
             <span>{chart ? formatCurrency(chart.min) : "$0.00"}</span>
           </div>
           <div className="chart-viewport">
@@ -612,6 +621,7 @@ export default function Home() {
             <span>{result ? result.endDate : "End"}</span>
           </div>
         </div>
+        {renderHoldingLegend("holding-snapshot-list-mobile")}
 
         <div className="table-card">
           <table>
