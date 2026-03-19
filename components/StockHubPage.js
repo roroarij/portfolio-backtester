@@ -121,7 +121,7 @@ export async function getStockMetadata(rawTicker, selectedView = "overview") {
   const description = getViewDescription(stock, selectedView);
 
   return {
-    title: `${stock.name} | ${stock.ticker} ${sectionLabel} | Stocks Screener`,
+    title: `${stock.ticker} ${sectionLabel} | ${stock.name} | Stocks Screener`,
     description
   };
 }
