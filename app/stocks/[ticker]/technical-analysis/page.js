@@ -7,7 +7,7 @@ export async function generateMetadata({ params }) {
     return await getStockMetadata(ticker, "technical-analysis");
   } catch {
     return {
-      title: "Technical Analysis | Stocksscreener"
+      title: "Technical Analysis | Stocks Screener"
     };
   }
 }

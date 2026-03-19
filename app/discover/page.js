@@ -1,8 +1,8 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "Discover | Stocksscreener",
-  description: "Browse featured portfolios, stock ideas, and future discovery surfaces on Stocksscreener."
+  title: "Discover | Stocks Screener",
+  description: "Browse featured portfolios, stock ideas, and future discovery surfaces on Stocks Screener."
 };
 
 export default function DiscoverPage() {

@@ -8,7 +8,7 @@ const measurementId = "G-0FSHK07S04";
 
 export const metadata = {
   title: {
-    default: "Stocksscreener",
+    default: "Stocks Screener",
     template: "%s"
   },
   description: "Portfolio backtesting, market tools, stock discovery, and shareable finance utility pages."
@@ -30,7 +30,7 @@ export default function RootLayout({ children }) {
         <header className="site-header">
           <div className="site-shell">
             <Link className="site-brand" href="/">
-              Stocksscreener
+              Stocks Screener
             </Link>
             <div className="site-header-actions">
               <HeaderSearch />

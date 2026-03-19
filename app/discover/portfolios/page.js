@@ -3,8 +3,8 @@ import Link from "next/link";
 import { getFeaturedPortfolios } from "@/lib/site-data";
 
 export const metadata = {
-  title: "Discover Portfolios | Stocksscreener",
-  description: "Browse featured and discoverable portfolio setups on Stocksscreener."
+  title: "Discover Portfolios | Stocks Screener",
+  description: "Browse featured and discoverable portfolio setups on Stocks Screener."
 };
 
 export default function DiscoverPortfoliosPage() {

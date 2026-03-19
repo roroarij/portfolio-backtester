@@ -8,7 +8,7 @@ const marketSections = [
 ];
 
 export const metadata = {
-  title: "Markets | Stocksscreener",
+  title: "Markets | Stocks Screener",
   description: "Market-level browse surfaces for indexes, commodities, sectors, and future calendar tools."
 };
 

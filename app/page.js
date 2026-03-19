@@ -41,7 +41,7 @@ const marketCards = [
 ];
 
 export const metadata = {
-  title: "Stocksscreener",
+  title: "Stocks Screener",
   description: "Portfolio backtesting, stock discovery, market tools, and shareable portfolio analysis."
 };
 
@@ -94,7 +94,7 @@ export default async function HomePage({ searchParams }) {
   return (
     <main className="app-shell">
       <section className="hero hero-home">
-        <p className="eyebrow">Stocksscreener</p>
+        <p className="eyebrow">Stocks Screener</p>
         <h1>Backtest portfolios, screen markets, and research stocks from one hub.</h1>
         <p className="hero-copy">
           Use the backtester for shareable portfolio analysis, browse discoverable setups, and move into ticker-level chart, fundamentals, and news views from the same platform.

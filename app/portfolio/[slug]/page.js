@@ -30,12 +30,12 @@ export async function generateMetadata({ params }) {
 
   if (!portfolio) {
     return {
-      title: "Portfolio Not Found | Stocksscreener"
+      title: "Portfolio Not Found | Stocks Screener"
     };
   }
 
   return {
-    title: `${portfolio.title} | Stocksscreener`,
+    title: `${portfolio.title} | Stocks Screener`,
     description: portfolio.description
   };
 }

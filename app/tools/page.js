@@ -28,7 +28,7 @@ const tools = [
 ];
 
 export const metadata = {
-  title: "Tools | Stocksscreener",
+  title: "Tools | Stocks Screener",
   description: "Finance tools for portfolio backtesting, DCA modeling, options strategy analysis, and position sizing."
 };
 
