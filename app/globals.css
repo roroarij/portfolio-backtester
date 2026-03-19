@@ -347,14 +347,21 @@ select:focus {
   font-size: 0.86rem;
 }
 
+.chart-scale {
+  justify-content: flex-start;
+  gap: 0.55rem;
+}
+
+.chart-scale-values {
+  display: grid;
+  gap: 0.15rem;
+  line-height: 1.1;
+}
+
 .holding-snapshot-list {
   display: grid;
   gap: 0.22rem;
-  padding: 0.5rem 0;
-}
-
-.holding-snapshot-list-mobile {
-  display: none;
+  padding: 0.1rem 0 0;
 }
 
 .holding-snapshot-item {
@@ -462,25 +469,29 @@ tbody tr:nth-child(even) {
     grid-template-columns: 1fr;
   }
 
-  .chart-scale .holding-snapshot-list {
-    display: none;
+  .chart-scale {
+    gap: 0.45rem;
   }
 
-  .holding-snapshot-list-mobile {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.35rem 0.6rem;
-    margin-top: 0.75rem;
+  .holding-snapshot-list {
+    gap: 0.15rem;
+    padding-top: 0;
   }
 
-  .holding-snapshot-list-mobile .holding-snapshot-item {
-    min-width: 0;
-  }
-
-  .holding-snapshot-list-mobile .holding-snapshot-copy {
-    gap: 0.22rem;
+  .holding-snapshot-copy {
+    gap: 0.18rem;
     flex-wrap: wrap;
     white-space: normal;
+  }
+
+  .holding-snapshot-copy strong,
+  .holding-snapshot-copy span {
+    font-size: 0.64rem;
+  }
+
+  .holding-swatch {
+    width: 8px;
+    height: 8px;
   }
 
   .chart-footer {

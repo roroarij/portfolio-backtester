@@ -572,9 +572,11 @@ export default function Home() {
 
         <div className="chart-card">
           <div className="chart-scale">
-            <span>{chart ? formatCurrency(chart.max) : "$0.00"}</span>
+            <div className="chart-scale-values">
+              <span>H: {chart ? formatCurrency(chart.max) : "$0.00"}</span>
+              <span>L: {chart ? formatCurrency(chart.min) : "$0.00"}</span>
+            </div>
             {renderHoldingLegend()}
-            <span>{chart ? formatCurrency(chart.min) : "$0.00"}</span>
           </div>
           <div className="chart-viewport">
             {activePoint ? (
@@ -621,7 +623,6 @@ export default function Home() {
             <span>{result ? result.endDate : "End"}</span>
           </div>
         </div>
-        {renderHoldingLegend("holding-snapshot-list-mobile")}
 
         <div className="table-card">
           <table>
