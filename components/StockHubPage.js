@@ -243,6 +243,18 @@ export default async function StockHubPage({ ticker, selectedView = "overview" }
                 <h3>Price / Book</h3>
                 <p>{formatRatio(stock.priceToBook)}</p>
               </article>
+              <article className="feature-card">
+                <h3>Website</h3>
+                {stock.website ? (
+                  <p>
+                    <a href={stock.website} target="_blank" rel="noreferrer">
+                      {stock.website}
+                    </a>
+                  </p>
+                ) : (
+                  <p>Not available</p>
+                )}
+              </article>
             </div>
             {stock.businessSummary ? (
               <article className="feature-card feature-card-wide">
