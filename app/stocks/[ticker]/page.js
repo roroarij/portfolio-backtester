@@ -2,9 +2,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import StockPriceChart from "@/components/StockPriceChart";
-import { getTickerFundamentalsData, getTickerNews } from "@/lib/stocks";
+import { getTickerFundamentalsData, getTickerNews, getTickerTechnicalAnalysis } from "@/lib/stocks";
 
-const views = new Set(["overview", "chart", "fundamentals", "news"]);
+const views = new Set(["overview", "chart", "technical-analysis", "fundamentals", "news"]);
 
 function formatCurrency(value) {
   if (!Number.isFinite(value)) {
@@ -68,9 +68,14 @@ export default async function StockTickerPage({ params, searchParams }) {
 
   let stock;
   let news;
+  let technical;
 
   try {
-    [stock, news] = await Promise.all([getTickerFundamentalsData(ticker), getTickerNews(ticker)]);
+    [stock, news, technical] = await Promise.all([
+      getTickerFundamentalsData(ticker),
+      getTickerNews(ticker),
+      getTickerTechnicalAnalysis(ticker)
+    ]);
   } catch {
     notFound();
   }
@@ -139,7 +144,7 @@ export default async function StockTickerPage({ params, searchParams }) {
 
       <section className="panel feature-grid-panel">
         <div className="tab-nav" role="tablist" aria-label={`${stock.ticker} sections`}>
-          {["overview", "chart", "fundamentals", "news"].map((view) => (
+          {["overview", "chart", "technical-analysis", "fundamentals", "news"].map((view) => (
             <Link
               key={view}
               href={tabHref(view)}
@@ -181,6 +186,49 @@ export default async function StockTickerPage({ params, searchParams }) {
         ) : null}
 
         {selectedView === "chart" ? <StockPriceChart ticker={stock.ticker} history={stock.history} /> : null}
+
+        {selectedView === "technical-analysis" ? (
+          <div className="feature-grid">
+            <article className="feature-card">
+              <h3>SMA 20</h3>
+              <p>{formatCurrency(technical.technicals.sma20)}</p>
+            </article>
+            <article className="feature-card">
+              <h3>SMA 50</h3>
+              <p>{formatCurrency(technical.technicals.sma50)}</p>
+            </article>
+            <article className="feature-card">
+              <h3>SMA 200</h3>
+              <p>{formatCurrency(technical.technicals.sma200)}</p>
+            </article>
+            <article className="feature-card">
+              <h3>RSI 14</h3>
+              <p>{formatRatio(technical.technicals.rsi14)}</p>
+            </article>
+            <article className="feature-card">
+              <h3>Trend</h3>
+              <p>{technical.technicals.trend}</p>
+            </article>
+            <article className="feature-card">
+              <h3>Momentum</h3>
+              <p>{technical.technicals.momentum}</p>
+            </article>
+            <article className="feature-card">
+              <h3>Distance From 52W High</h3>
+              <p>{formatPercent(technical.technicals.distanceFromHigh)}</p>
+            </article>
+            <article className="feature-card">
+              <h3>Distance From 52W Low</h3>
+              <p>{formatPercent(technical.technicals.distanceFromLow)}</p>
+            </article>
+            <article className="feature-card">
+              <h3>Current vs Averages</h3>
+              <p>
+                {formatCurrency(technical.technicals.latestClose)} vs {formatCurrency(technical.technicals.sma20)} / {formatCurrency(technical.technicals.sma50)}
+              </p>
+            </article>
+          </div>
+        ) : null}
 
         {selectedView === "fundamentals" ? (
           <>
