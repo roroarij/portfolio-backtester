@@ -17,6 +17,16 @@ const ranges = [
 ];
 
 const allowedRanges = new Set(ranges.map((option) => option.value));
+const holdingPalette = [
+  "#b85c38",
+  "#f6b73c",
+  "#2f7d6c",
+  "#4763b3",
+  "#b84a62",
+  "#7e5ab6",
+  "#4f8f2f",
+  "#b76b2f"
+];
 
 function trackEvent(name, params = {}) {
   if (typeof window === "undefined" || typeof window.gtag !== "function") {
@@ -36,6 +46,12 @@ function formatCurrency(value) {
 
 function formatPercent(value) {
   return `${value >= 0 ? "+" : ""}${value.toFixed(2)}%`;
+}
+
+function formatShareCount(value) {
+  return new Intl.NumberFormat("en-US", {
+    maximumFractionDigits: 4
+  }).format(value);
 }
 
 function formatDayLabel(value) {
@@ -258,6 +274,21 @@ export default function Home() {
     ? result.series.filter((_, index) => index % Math.max(1, Math.floor(result.series.length / 18)) === 0 || index === result.series.length - 1)
     : [];
   const activePointHoldings = activePoint?.holdings || [];
+  const activeHoldingLegendItems = activePointHoldings.map((holding, index) => {
+    const color = holdingPalette[index % holdingPalette.length];
+
+    return (
+      <div className="holding-snapshot-item" key={`${activePoint?.date || "point"}-${holding.symbol}`}>
+        <span className="holding-swatch" style={{ backgroundColor: color }} aria-hidden="true" />
+        <div className="holding-snapshot-copy">
+          <strong style={{ color }}>{holding.symbol}</strong>
+          <span>{formatShareCount(holding.quantity)} sh</span>
+          <span>{formatCurrency(holding.value)}</span>
+          <span>@ {formatCurrency(holding.close)}</span>
+        </div>
+      </div>
+    );
+  });
 
   function updateHolding(id, field, value) {
     setHoldings((current) => current.map((holding) => (holding.id === id ? { ...holding, [field]: value } : holding)));
@@ -530,30 +561,11 @@ export default function Home() {
           <div className="chart-scale">
             <span>{chart ? formatCurrency(chart.max) : "$0.00"}</span>
             {activePointHoldings.length ? (
-              <div className="holding-snapshot">
-                {activePointHoldings.map((holding) => (
-                  <div className="holding-snapshot-row" key={`${activePoint.date}-${holding.symbol}`}>
-                    <div>
-                      <strong>{holding.symbol}</strong>
-                      <span>{holding.quantity} share{holding.quantity === 1 ? "" : "s"}</span>
-                    </div>
-                    <div>
-                      <strong>{formatCurrency(holding.value)}</strong>
-                      <span>@ {formatCurrency(holding.close)}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
+              <div className="holding-snapshot-list">{activeHoldingLegendItems}</div>
             ) : null}
             <span>{chart ? formatCurrency(chart.min) : "$0.00"}</span>
           </div>
           <div className="chart-viewport">
-            {activePoint ? (
-              <div className="chart-tooltip">
-                <strong>{formatCurrency(activePoint.value)}</strong>
-                <span>{formatDayLabel(activePoint.date)}</span>
-              </div>
-            ) : null}
             <svg
               ref={chartRef}
               viewBox="0 0 960 420"

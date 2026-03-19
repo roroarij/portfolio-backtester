@@ -313,30 +313,6 @@ select:focus {
   position: relative;
 }
 
-.chart-tooltip {
-  position: absolute;
-  top: 0.9rem;
-  left: 1rem;
-  z-index: 2;
-  display: grid;
-  gap: 0.15rem;
-  padding: 0.8rem 0.9rem;
-  border-radius: 14px;
-  background: rgba(255, 252, 244, 0.96);
-  border: 1px solid rgba(56, 42, 24, 0.1);
-  box-shadow: 0 12px 28px rgba(44, 26, 8, 0.12);
-  pointer-events: none;
-}
-
-.chart-tooltip strong {
-  font-size: 1rem;
-}
-
-.chart-tooltip span {
-  color: var(--muted);
-  font-size: 0.82rem;
-}
-
 .chart-scale,
 .chart-footer {
   display: flex;
@@ -346,35 +322,40 @@ select:focus {
   font-size: 0.86rem;
 }
 
-.holding-snapshot {
+.holding-snapshot-list {
   display: grid;
-  gap: 0.7rem;
+  gap: 0.45rem;
   padding: 0.85rem 0;
 }
 
-.holding-snapshot-row {
+.holding-snapshot-item {
   display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 0.75rem 0.85rem;
-  border-radius: 14px;
-  background: rgba(255, 252, 244, 0.82);
-  border: 1px solid rgba(56, 42, 24, 0.08);
+  align-items: flex-start;
+  gap: 0.55rem;
 }
 
-.holding-snapshot-row div {
-  display: grid;
-  gap: 0.15rem;
+.holding-swatch {
+  width: 14px;
+  height: 14px;
+  margin-top: 0.18rem;
+  border-radius: 4px;
+  flex: 0 0 auto;
 }
 
-.holding-snapshot-row strong {
-  color: var(--ink);
-  font-size: 0.95rem;
+.holding-snapshot-copy {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.2rem 0.4rem;
+  line-height: 1.25;
 }
 
-.holding-snapshot-row span {
+.holding-snapshot-copy strong,
+.holding-snapshot-copy span {
+  font-size: 0.76rem;
+}
+
+.holding-snapshot-copy span {
   color: var(--muted);
-  font-size: 0.8rem;
 }
 
 .chart-footer {
