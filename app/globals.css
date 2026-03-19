@@ -311,6 +311,7 @@ select:focus {
 
 .chart-viewport {
   position: relative;
+  overflow: visible;
 }
 
 .chart-tooltip {
@@ -455,6 +456,12 @@ tbody tr:nth-child(even) {
 
   .chart-card {
     grid-template-columns: 1fr;
+  }
+
+  .holding-snapshot-list {
+    max-height: 8.5rem;
+    overflow-y: auto;
+    overscroll-behavior: contain;
   }
 
   .chart-footer {

@@ -274,6 +274,8 @@ export default function Home() {
     ? result.series.filter((_, index) => index % Math.max(1, Math.floor(result.series.length / 18)) === 0 || index === result.series.length - 1)
     : [];
   const activePointHoldings = activePoint?.holdings || [];
+  const activeTooltipLeft = activePoint ? `${(activePoint.x / chart.width) * 100}%` : "50%";
+  const activeTooltipTop = activePoint ? `${Math.max(chart.padding + 8, activePoint.y - 18)}px` : "0px";
   const activeHoldingLegendItems = activePointHoldings.map((holding, index) => {
     const color = holdingPalette[index % holdingPalette.length];
 
@@ -570,8 +572,8 @@ export default function Home() {
               <div
                 className="chart-tooltip chart-tooltip-inline"
                 style={{
-                  left: `${Math.min(chart.width - 88, Math.max(88, activePoint.x))}px`,
-                  top: `${Math.max(chart.padding + 8, activePoint.y - 18)}px`
+                  left: activeTooltipLeft,
+                  top: activeTooltipTop
                 }}
               >
                 <strong>{formatCurrency(activePoint.value)}</strong>
@@ -588,7 +590,6 @@ export default function Home() {
               onPointerLeave={() => setActivePointIndex(null)}
               onTouchStart={handleChartTouchMove}
               onTouchMove={handleChartTouchMove}
-              onTouchEnd={() => setActivePointIndex(null)}
             >
               <defs>
                 <linearGradient id="chart-fill" x1="0" y1="0" x2="0" y2="1">
