@@ -1,6 +1,19 @@
-import { redirect } from "next/navigation";
+import StockHubPage, { getStockMetadata } from "@/components/StockHubPage";
 
-export default async function StockFundamentalsRedirectPage({ params }) {
+export async function generateMetadata({ params }) {
   const { ticker } = await params;
-  redirect(`/stocks/${String(ticker).toUpperCase()}?view=fundamentals`);
+
+  try {
+    return await getStockMetadata(ticker, "fundamentals");
+  } catch {
+    return {
+      title: "Stock Fundamentals | Stocksscreener"
+    };
+  }
+}
+
+export default async function StockFundamentalsPage({ params }) {
+  const { ticker } = await params;
+
+  return <StockHubPage ticker={ticker} selectedView="fundamentals" />;
 }

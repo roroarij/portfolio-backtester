@@ -1,6 +1,19 @@
-import { redirect } from "next/navigation";
+import StockHubPage, { getStockMetadata } from "@/components/StockHubPage";
 
-export default async function StockTechnicalAnalysisRedirectPage({ params }) {
+export async function generateMetadata({ params }) {
   const { ticker } = await params;
-  redirect(`/stocks/${String(ticker).toUpperCase()}?view=technical-analysis`);
+
+  try {
+    return await getStockMetadata(ticker, "technical-analysis");
+  } catch {
+    return {
+      title: "Technical Analysis | Stocksscreener"
+    };
+  }
+}
+
+export default async function StockTechnicalAnalysisPage({ params }) {
+  const { ticker } = await params;
+
+  return <StockHubPage ticker={ticker} selectedView="technical-analysis" />;
 }

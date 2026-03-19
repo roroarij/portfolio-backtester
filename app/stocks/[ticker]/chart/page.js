@@ -1,6 +1,19 @@
-import { redirect } from "next/navigation";
+import StockHubPage, { getStockMetadata } from "@/components/StockHubPage";
 
-export default async function StockChartRedirectPage({ params }) {
+export async function generateMetadata({ params }) {
   const { ticker } = await params;
-  redirect(`/stocks/${String(ticker).toUpperCase()}?view=chart`);
+
+  try {
+    return await getStockMetadata(ticker, "chart");
+  } catch {
+    return {
+      title: "Stock Chart | Stocksscreener"
+    };
+  }
+}
+
+export default async function StockChartPage({ params }) {
+  const { ticker } = await params;
+
+  return <StockHubPage ticker={ticker} selectedView="chart" />;
 }
