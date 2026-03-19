@@ -5,6 +5,13 @@ import StockPriceChart from "@/components/StockPriceChart";
 import { getTickerFundamentalsData, getTickerNews, getTickerTechnicalAnalysis } from "@/lib/stocks";
 
 const views = ["overview", "chart", "technical-analysis", "fundamentals", "news"];
+const viewLabels = {
+  overview: "Overview",
+  chart: "Chart",
+  "technical-analysis": "Technical Analysis",
+  fundamentals: "Fundamentals",
+  news: "News"
+};
 
 function formatCurrency(value) {
   if (!Number.isFinite(value)) {
@@ -48,23 +55,65 @@ function buildTabHref(ticker, view) {
   return view === "overview" ? `/stocks/${ticker}` : `/stocks/${ticker}/${view}`;
 }
 
-function getSummaryIntro(stock) {
-  if (stock.businessSummary) {
-    const firstSentence = stock.businessSummary.split(". ")[0]?.trim();
-    if (firstSentence) {
-      return `${firstSentence}. Explore chart, technical analysis, fundamentals, and news below.`;
-    }
+function getSectionLabel(view) {
+  return viewLabels[view] || "Overview";
+}
+
+function getSummaryExcerpt(summary, maxSentences = 2) {
+  if (!summary) {
+    return null;
   }
 
-  return `${stock.name} trades on ${stock.exchange}. Explore chart, technical analysis, fundamentals, and news below.`;
+  const sentences = summary
+    .split(/(?<=[.!?])\s+/)
+    .map((sentence) => sentence.trim())
+    .filter(Boolean)
+    .slice(0, maxSentences);
+
+  if (!sentences.length) {
+    return null;
+  }
+
+  return sentences.join(" ");
+}
+
+function getEntityDescription(stock) {
+  return (
+    getSummaryExcerpt(stock.businessSummary, 2) ||
+    `${stock.name} trades on ${stock.exchange}${stock.sector ? ` in the ${stock.sector} sector` : ""}${stock.industry ? ` and ${stock.industry} industry` : ""}.`
+  );
+}
+
+function getViewDescription(stock, selectedView) {
+  const entityDescription = getEntityDescription(stock);
+
+  if (selectedView === "overview") {
+    return `${entityDescription} Use the sections below to move between chart, technical analysis, fundamentals, and news.`;
+  }
+
+  if (selectedView === "chart") {
+    return `${entityDescription} This chart view focuses on recent price action, range context, and interactive scrubbing for ${stock.ticker}.`;
+  }
+
+  if (selectedView === "technical-analysis") {
+    return `${entityDescription} This technical analysis view summarizes moving averages, RSI, momentum, and 52-week positioning for ${stock.ticker}.`;
+  }
+
+  if (selectedView === "fundamentals") {
+    return `${entityDescription} This fundamentals view focuses on valuation, growth, margins, and company profile data for ${stock.ticker}.`;
+  }
+
+  if (selectedView === "news") {
+    return `${entityDescription} This news view pulls recent coverage and headlines tied to ${stock.ticker}.`;
+  }
+
+  return entityDescription;
 }
 
 export async function getStockMetadata(rawTicker, selectedView = "overview") {
   const stock = await getTickerFundamentalsData(rawTicker);
-  const sectionLabel = selectedView === "overview" ? "Overview" : selectedView.replaceAll("-", " ");
-  const description = stock.businessSummary
-    ? stock.businessSummary
-    : `${stock.name} (${stock.ticker}) stock page with ${sectionLabel}, chart, fundamentals, technical analysis, and news.`;
+  const sectionLabel = getSectionLabel(selectedView);
+  const description = getViewDescription(stock, selectedView);
 
   return {
     title: `${stock.ticker} ${sectionLabel} | Stocksscreener`,
@@ -100,13 +149,13 @@ export default async function StockHubPage({ ticker, selectedView = "overview" }
   return (
     <main className="app-shell">
       <section className="hero">
-        <p className="eyebrow">Stock Hub</p>
+        <p className="eyebrow">{selectedView === "overview" ? "Stock Hub" : `${getSectionLabel(selectedView)}`}</p>
         <h1>
           {stock.ticker}
           <br />
-          {stock.name}
+          {selectedView === "overview" ? stock.name : `${stock.name} ${getSectionLabel(selectedView)}`}
         </h1>
-        <p className="hero-copy">{getSummaryIntro(stock)}</p>
+        <p className="hero-copy">{getViewDescription(stock, selectedView)}</p>
         <div className="hero-actions">
           <Link className="primary-button" href={`/tools/portfolio-backtester?h=${stock.ticker}:10&r=5y`}>
             Backtest {stock.ticker}
