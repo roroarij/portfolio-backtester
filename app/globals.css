@@ -346,6 +346,37 @@ select:focus {
   font-size: 0.86rem;
 }
 
+.holding-snapshot {
+  display: grid;
+  gap: 0.7rem;
+  padding: 0.85rem 0;
+}
+
+.holding-snapshot-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem 0.85rem;
+  border-radius: 14px;
+  background: rgba(255, 252, 244, 0.82);
+  border: 1px solid rgba(56, 42, 24, 0.08);
+}
+
+.holding-snapshot-row div {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.holding-snapshot-row strong {
+  color: var(--ink);
+  font-size: 0.95rem;
+}
+
+.holding-snapshot-row span {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
 .chart-footer {
   grid-column: 2;
   flex-direction: row;

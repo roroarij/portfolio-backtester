@@ -42,7 +42,8 @@ function formatDayLabel(value) {
   return new Intl.DateTimeFormat("en-US", {
     month: "short",
     day: "numeric",
-    year: "numeric"
+    year: "numeric",
+    timeZone: "UTC"
   }).format(new Date(`${value}T00:00:00Z`));
 }
 
@@ -256,6 +257,7 @@ export default function Home() {
   const tablePoints = result
     ? result.series.filter((_, index) => index % Math.max(1, Math.floor(result.series.length / 18)) === 0 || index === result.series.length - 1)
     : [];
+  const activePointHoldings = activePoint?.holdings || [];
 
   function updateHolding(id, field, value) {
     setHoldings((current) => current.map((holding) => (holding.id === id ? { ...holding, [field]: value } : holding)));
@@ -527,6 +529,22 @@ export default function Home() {
         <div className="chart-card">
           <div className="chart-scale">
             <span>{chart ? formatCurrency(chart.max) : "$0.00"}</span>
+            {activePointHoldings.length ? (
+              <div className="holding-snapshot">
+                {activePointHoldings.map((holding) => (
+                  <div className="holding-snapshot-row" key={`${activePoint.date}-${holding.symbol}`}>
+                    <div>
+                      <strong>{holding.symbol}</strong>
+                      <span>{holding.quantity} share{holding.quantity === 1 ? "" : "s"}</span>
+                    </div>
+                    <div>
+                      <strong>{formatCurrency(holding.value)}</strong>
+                      <span>@ {formatCurrency(holding.close)}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : null}
             <span>{chart ? formatCurrency(chart.min) : "$0.00"}</span>
           </div>
           <div className="chart-viewport">
