@@ -1,6 +1,7 @@
 import Script from "next/script";
 import Link from "next/link";
 
+import HeaderSearch from "@/components/HeaderSearch";
 import "./globals.css";
 
 const measurementId = "G-0FSHK07S04";
@@ -31,13 +32,16 @@ export default function RootLayout({ children }) {
             <Link className="site-brand" href="/">
               Stocksscreener
             </Link>
-            <nav className="site-nav" aria-label="Primary">
-              <Link href="/">Home</Link>
-              <Link href="/portfolio">Portfolios</Link>
-              <Link href="/markets">Markets</Link>
-              <Link href="/tools">Tools</Link>
-              <Link href="/discover">Discover</Link>
-            </nav>
+            <div className="site-header-actions">
+              <HeaderSearch />
+              <nav className="site-nav" aria-label="Primary">
+                <Link href="/">Home</Link>
+                <Link href="/portfolio">Portfolios</Link>
+                <Link href="/markets">Markets</Link>
+                <Link href="/tools">Tools</Link>
+                <Link href="/discover">Discover</Link>
+              </nav>
+            </div>
           </div>
         </header>
         {children}
