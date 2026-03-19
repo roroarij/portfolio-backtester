@@ -92,19 +92,19 @@ function getViewDescription(stock, selectedView) {
   }
 
   if (selectedView === "chart") {
-    return `${entityDescription} This chart view focuses on recent price action, range context, and interactive scrubbing for ${stock.ticker}.`;
+    return `This chart view focuses on recent price action, range context, and interactive scrubbing for ${stock.ticker}.`;
   }
 
   if (selectedView === "technical-analysis") {
-    return `${entityDescription} This technical analysis view summarizes moving averages, RSI, momentum, and 52-week positioning for ${stock.ticker}.`;
+    return `This technical analysis view summarizes moving averages, RSI, momentum, and 52-week positioning for ${stock.ticker}.`;
   }
 
   if (selectedView === "fundamentals") {
-    return `${entityDescription} This fundamentals view focuses on valuation, growth, margins, and company profile data for ${stock.ticker}.`;
+    return `This fundamentals view focuses on valuation, growth, margins, and company profile data for ${stock.ticker}.`;
   }
 
   if (selectedView === "news") {
-    return `${entityDescription} This news view pulls recent coverage and headlines tied to ${stock.ticker}.`;
+    return `This news view pulls recent coverage and headlines tied to ${stock.ticker}.`;
   }
 
   return entityDescription;
