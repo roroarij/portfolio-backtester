@@ -377,6 +377,7 @@ export default async function StockHubPage({ ticker, selectedView = "overview" }
                     {item.publisher || "Unknown publisher"}
                     {item.publishedAt ? ` • ${formatDate(item.publishedAt)}` : ""}
                   </p>
+                  {item.snippet ? <p>{item.snippet}</p> : null}
                   <a href={item.link} target="_blank" rel="noreferrer">
                     Read article
                   </a>
