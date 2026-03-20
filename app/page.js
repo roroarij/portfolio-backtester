@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
-import { getFeaturedPortfolios } from "@/lib/site-data";
+import { getFeaturedPortfolios, getHomepageSymbolGroups } from "@/lib/site-data";
 import { getTickerPageData } from "@/lib/stocks";
 
 const coreTools = [
@@ -68,10 +68,11 @@ async function loadQuotes(symbols) {
 export default async function HomePage({ searchParams }) {
   const params = await searchParams;
   const featuredPortfolios = getFeaturedPortfolios();
+  const { indexes: indexSymbols, trendingStocks: trendingSymbols, commodities: commoditySymbols } = getHomepageSymbolGroups();
   const [indexes, trendingStocks, commodities] = await Promise.all([
-    loadQuotes(["SPY", "QQQ", "DIA", "IWM"]),
-    loadQuotes(["AAPL", "NVDA", "MSFT", "TSLA"]),
-    loadQuotes(["GLD", "SLV", "USO", "UNG"])
+    loadQuotes(indexSymbols),
+    loadQuotes(trendingSymbols),
+    loadQuotes(commoditySymbols)
   ]);
 
   if (params?.h) {
