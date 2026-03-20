@@ -19,7 +19,7 @@ export default function DiscoverPortfoliosPage() {
         <p className="eyebrow">Discover</p>
         <h1>Featured portfolio setups worth browsing and sharing.</h1>
         <p className="hero-copy">
-          Discoverable portfolios now link into real published routes under <code>/portfolio/[slug]</code> and also open directly in the live backtester.
+          Each featured portfolio has a dedicated public page with live performance statistics and a direct link into the backtester when you want to change weights or holdings.
         </p>
       </section>
 

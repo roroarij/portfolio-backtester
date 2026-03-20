@@ -260,6 +260,28 @@ h1 {
   margin-top: 1rem;
 }
 
+.tool-panel {
+  padding: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.tool-layout {
+  display: grid;
+  grid-template-columns: 320px minmax(0, 1fr);
+  gap: 1rem;
+}
+
+.tool-controls {
+  display: grid;
+  gap: 0.85rem;
+  align-self: start;
+}
+
+.tool-results {
+  display: grid;
+  gap: 1rem;
+}
+
 .tab-nav {
   display: flex;
   gap: 0.55rem;
@@ -290,6 +312,10 @@ h1 {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 1rem;
+}
+
+.market-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .quote-card {
@@ -641,6 +667,20 @@ svg {
   stroke-linejoin: round;
 }
 
+.options-payoff-chart {
+  width: 100%;
+  height: 240px;
+  overflow: visible;
+}
+
+.options-payoff-line {
+  fill: none;
+  stroke: var(--accent-strong);
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
 .chart-area {
   fill: url(#chart-fill);
 }
@@ -702,6 +742,10 @@ tbody tr:nth-child(even) {
 
   .feature-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .tool-layout {
+    grid-template-columns: 1fr;
   }
 
   .market-strip {

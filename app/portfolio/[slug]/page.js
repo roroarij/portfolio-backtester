@@ -59,6 +59,13 @@ export default async function PortfolioSlugPage({ params }) {
     notFound();
   }
 
+  const latestPoint = history.series.at(-1);
+  const latestValue = latestPoint?.value || 0;
+  const latestHoldings = (latestPoint?.holdings || []).map((holding) => ({
+    ...holding,
+    weightPct: latestValue > 0 ? (holding.value / latestValue) * 100 : 0
+  }));
+
   return (
     <main className="app-shell">
       <section className="hero">
@@ -79,7 +86,7 @@ export default async function PortfolioSlugPage({ params }) {
         <div className="section-header">
           <div>
             <h2>Performance Snapshot</h2>
-            <p>This portfolio page now computes live stats from the same historical data engine used by the tool route.</p>
+            <p>Historical results are calculated from adjusted daily closes across the selected lookback window.</p>
           </div>
         </div>
         <div className="feature-grid">
@@ -118,14 +125,16 @@ export default async function PortfolioSlugPage({ params }) {
         <div className="section-header">
           <div>
             <h2>Holdings</h2>
-            <p>This is now a live portfolio entity page with computed stats, while still linking back into the interactive tool.</p>
+            <p>Current marked-to-market weights are based on the latest data point in the selected backtest range.</p>
           </div>
         </div>
         <div className="feature-grid">
-          {portfolio.holdings.map((holding) => (
+          {latestHoldings.map((holding) => (
             <article className="feature-card" key={holding.symbol}>
               <h3>{holding.symbol}</h3>
-              <p>{holding.quantity} shares in the default template configuration.</p>
+              <p>{holding.quantity} shares</p>
+              <p>{formatCurrency(holding.value)} current value</p>
+              <p>{formatPercent(holding.weightPct)} portfolio weight</p>
               <Link href={`/stocks/${holding.symbol}`}>View stock page</Link>
             </article>
           ))}
@@ -135,8 +144,8 @@ export default async function PortfolioSlugPage({ params }) {
       <section className="panel feature-grid-panel">
         <div className="section-header">
           <div>
-            <h2>Portfolio Metadata</h2>
-            <p>These fields should later be stored per published portfolio so discovery pages can sort and filter them cleanly.</p>
+            <h2>Portfolio Details</h2>
+            <p>Use the tags and default range to understand the lens behind this published comparison setup.</p>
           </div>
         </div>
         <div className="feature-grid">
@@ -149,8 +158,12 @@ export default async function PortfolioSlugPage({ params }) {
             <p>{portfolio.tags.join(", ")}</p>
           </article>
           <article className="feature-card">
-            <h3>Route Type</h3>
-            <p>Published portfolio entity under <code>/portfolio/[slug]</code>.</p>
+            <h3>Holdings count</h3>
+            <p>{portfolio.holdings.length}</p>
+          </article>
+          <article className="feature-card">
+            <h3>Latest portfolio value</h3>
+            <p>{formatCurrency(history.summary.endValue)}</p>
           </article>
         </div>
       </section>

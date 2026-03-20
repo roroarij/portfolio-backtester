@@ -1,53 +1,43 @@
 import Link from "next/link";
 
-const portfolioStates = [
-  {
-    title: "Featured Portfolios",
-    description: "Editorial or system-published portfolio pages that deserve canonical indexing and internal links."
-  },
-  {
-    title: "Unlisted Share URLs",
-    description: "Generated backtest links that remain shareable, but should not automatically become crawlable public pages."
-  },
-  {
-    title: "Published Portfolio Entities",
-    description: "Portfolio records with title, slug, tags, summary, and derived stats."
-  }
-];
+import { getFeaturedPortfolios } from "@/lib/site-data";
 
 export const metadata = {
   title: "Portfolios | Stocks Screener",
-  description: "Portfolio pages, saved backtests, and published comparison setups on Stocks Screener.",
+  description: "Published portfolio pages and benchmark-aware comparison setups on Stocks Screener.",
   alternates: {
     canonical: "/portfolio"
   }
 };
 
 export default function PortfolioPage() {
+  const portfolios = getFeaturedPortfolios();
+
   return (
     <main className="app-shell">
       <section className="hero">
         <p className="eyebrow">Portfolios</p>
-        <h1>Portfolio routes should represent real entities, not only tool state.</h1>
+        <h1>Published portfolio pages built for comparison, sharing, and research.</h1>
         <p className="hero-copy">
-          The tool now lives under <code>/tools/portfolio-backtester</code>. This section is for discoverable and published portfolio entities that can stand on their own.
+          These portfolios are canonical public pages with live historical statistics and direct links back into the interactive backtester for deeper edits.
         </p>
         <div className="hero-actions">
           <Link className="primary-button" href="/discover/portfolios">
-            Browse discoverable portfolios
+            Browse portfolios
           </Link>
           <Link className="ghost-button" href="/tools/portfolio-backtester">
-            Open the tool
+            Build your own
           </Link>
         </div>
       </section>
 
       <section className="panel feature-grid-panel">
         <div className="feature-grid">
-          {portfolioStates.map((item) => (
-            <article className="feature-card" key={item.title}>
+          {portfolios.map((item) => (
+            <article className="feature-card" key={item.slug}>
               <h3>{item.title}</h3>
-              <p>{item.description}</p>
+              <p>{item.summary}</p>
+              <Link href={`/portfolio/${item.slug}`}>Open {item.title}</Link>
             </article>
           ))}
         </div>
