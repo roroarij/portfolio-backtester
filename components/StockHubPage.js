@@ -119,10 +119,14 @@ export async function getStockMetadata(rawTicker, selectedView = "overview") {
   const stock = await getTickerFundamentalsData(rawTicker);
   const sectionLabel = getSectionLabel(selectedView);
   const description = getViewDescription(stock, selectedView);
+  const canonical = buildTabHref(stock.ticker, selectedView);
 
   return {
     title: `${stock.name} | ${stock.ticker} ${sectionLabel} | Stocks Screener`,
-    description
+    description,
+    alternates: {
+      canonical
+    }
   };
 }
 

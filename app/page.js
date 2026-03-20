@@ -42,7 +42,10 @@ const marketCards = [
 
 export const metadata = {
   title: "Stocks Screener",
-  description: "Portfolio backtesting, stock discovery, market tools, and shareable portfolio analysis."
+  description: "Portfolio backtesting, stock discovery, market tools, and shareable portfolio analysis.",
+  alternates: {
+    canonical: "/"
+  }
 };
 
 function formatCurrency(value) {

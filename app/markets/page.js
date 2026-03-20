@@ -9,7 +9,10 @@ const marketSections = [
 
 export const metadata = {
   title: "Markets | Stocks Screener",
-  description: "Market-level browse surfaces for indexes, commodities, sectors, and future calendar tools."
+  description: "Market-level browse surfaces for indexes, commodities, sectors, and future calendar tools.",
+  alternates: {
+    canonical: "/markets"
+  }
 };
 
 export default function MarketsPage() {

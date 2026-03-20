@@ -4,7 +4,10 @@ import { getFeaturedPortfolios } from "@/lib/site-data";
 
 export const metadata = {
   title: "Discover Portfolios | Stocks Screener",
-  description: "Browse featured and discoverable portfolio setups on Stocks Screener."
+  description: "Browse featured and discoverable portfolio setups on Stocks Screener.",
+  alternates: {
+    canonical: "/discover/portfolios"
+  }
 };
 
 export default function DiscoverPortfoliosPage() {

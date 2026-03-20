@@ -36,7 +36,10 @@ export async function generateMetadata({ params }) {
 
   return {
     title: `${portfolio.title} | Stocks Screener`,
-    description: portfolio.description
+    description: portfolio.description,
+    alternates: {
+      canonical: `/portfolio/${portfolio.slug}`
+    }
   };
 }
 

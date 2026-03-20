@@ -7,6 +7,7 @@ import "./globals.css";
 const measurementId = "G-0FSHK07S04";
 
 export const metadata = {
+  metadataBase: new URL("https://stocksscreener.com"),
   title: {
     default: "Stocks Screener",
     template: "%s"

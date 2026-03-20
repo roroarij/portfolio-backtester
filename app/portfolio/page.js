@@ -17,7 +17,10 @@ const portfolioStates = [
 
 export const metadata = {
   title: "Portfolios | Stocks Screener",
-  description: "Portfolio pages, saved backtests, and published comparison setups on Stocks Screener."
+  description: "Portfolio pages, saved backtests, and published comparison setups on Stocks Screener.",
+  alternates: {
+    canonical: "/portfolio"
+  }
 };
 
 export default function PortfolioPage() {
